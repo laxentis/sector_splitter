@@ -4,8 +4,8 @@ from utils import Coordinates, LatLong
 
 
 class Position:
-    def __init__(self, name, callsign, frequency, identifier, middle_letter, prefix, suffix, ssr_start, ssr_end,
-                 vis_points=None):
+    def __init__(self, name: str, callsign: str, frequency: float, identifier: str, middle_letter: str,
+                 prefix: str, suffix: str, ssr_start: str, ssr_end: str, vis_points=None):
         if vis_points is None:
             vis_points = []
         self.name = name
@@ -15,8 +15,8 @@ class Position:
         self.middle_letter = middle_letter
         self.prefix = prefix
         self.suffix = suffix
-        self.ssr_start = ssr_start
-        self.ssr_end = ssr_end
+        self.ssr_start = str(ssr_start)
+        self.ssr_end = str(ssr_end)
         self.vis_points = vis_points
 
     @staticmethod
@@ -57,7 +57,7 @@ class Position:
 
 
 class Radar:
-    def __init__(self, name, position, p_range, p_alt, p_cone, s_range, s_alt, s_cone, c_range, c_alt, c_cone):
+    def __init__(self, name: str, position: LatLong, p_range, p_alt, p_cone, s_range, s_alt, s_cone, c_range, c_alt, c_cone):
         self.name = name
         self.position = position
         self.p_range = p_range
@@ -118,6 +118,9 @@ class ESEFile:
             # RADAR
             if line == "[RADAR]":
                 self._parse_radars()
+            # LABELS
+            if line == "[FREETEXT]":
+                pass
             line = self.file.readline()
 
     def _parse_positions(self):

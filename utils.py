@@ -1,5 +1,5 @@
 class Coordinates:
-    def __init__(self, dms):
+    def __init__(self, dms: str):
         coords = dms.split('.')
         self.d = coords[0]
         self.m = int(coords[1])
@@ -18,9 +18,12 @@ class Coordinates:
 
 
 class LatLong:
-    def __init__(self, lat, lng):
+    def __init__(self, lat: Coordinates, lng: Coordinates):
         self.lat = lat
         self.lng = lng
 
     def __str__(self):
         return f"{self.lat} {self.lng}"
+
+    def __repr__(self):
+        return f"LatLong({self.lat}, {self.lng})"
