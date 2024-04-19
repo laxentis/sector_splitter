@@ -11,3 +11,4 @@ if __name__ == '__main__':
     ese.write_positions()
     ese.write_visibility_points()
     ese.write_radars()
+    ese.write_labels()
