@@ -20,11 +20,11 @@ class Position:
         self.vis_points = vis_points
 
     @staticmethod
-    def from_string(string):
+    def from_string(string: str):
         string = string.split(':')
         name = string[0]
         callsign = string[1]
-        frequency = string[2]
+        frequency = float(string[2])
         identifier = string[3]
         middle_letter = string[4]
         prefix = string[5]
@@ -57,7 +57,10 @@ class Position:
 
 
 class Radar:
-    def __init__(self, name: str, position: LatLong, p_range, p_alt, p_cone, s_range, s_alt, s_cone, c_range, c_alt, c_cone):
+    def __init__(self, name: str, position: LatLong,
+                 p_range: int, p_alt: int, p_cone: int,
+                 s_range: int, s_alt: int, s_cone: int,
+                 c_range: int, c_alt: int, c_cone: int):
         self.name = name
         self.position = position
         self.p_range = p_range
@@ -112,10 +115,19 @@ class Label:
         return Label(group, text, position)
 
 
+class DynPoint:
+    def __init__(self, name: str, position: LatLong):
+        self.name = name
+        self.position = position
+
+    def __str__(self):
+        return f"{self.name}"
+
 class ESEFile:
-    Positions = set()
-    Radars = set()
-    Labels = set()
+    Positions: set[Position] = set()
+    Radars: set[Radar] = set()
+    Labels: set[Label] = set()
+    DynPoints: set[DynPoint] = set()
     file = None
 
     def __init__(self, file):
@@ -169,7 +181,11 @@ class ESEFile:
             if not line:
                 break
             if line[0] != ';':
-                self.Labels.add(Label.from_string(line))
+                label = Label.from_string(line)
+                if label.group == 'DynPoints':
+                    self.DynPoints.add(DynPoint(label.text, label.position))
+                else:
+                    self.Labels.add(label)
             line = self.file.readline()
 
 
@@ -210,3 +226,10 @@ class ESEFile:
             writer.writerow(['Y', 'X', 'Group', 'Text'])
             for label in self.Labels:
                 writer.writerow([label.position.lat, label.position.lng, label.group, label.text])
+
+    def write_dynpoints(self):
+        with open('output/dynpoints.csv', 'w', newline='', encoding='utf-8') as dynpoints_file:
+            writer = csv.writer(dynpoints_file)
+            writer.writerow(['Y', 'X', 'Name'])
+            for point in self.DynPoints:
+                writer.writerow([point.position.lat, point.position.lng, point.name])
