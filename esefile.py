@@ -5,8 +5,22 @@ from utils import Coordinates, LatLong
 
 
 class Position:
+    """Class representing an ATC position"""
     def __init__(self, name: str, callsign: str, frequency: float, identifier: str, middle_letter: str,
                  prefix: str, suffix: str, ssr_start: str, ssr_end: str, vis_points=None):
+        """
+        Create an ATC position
+        :param name: Name of the ATC position, e.g. EPWW_N_CTR
+        :param callsign: Radio-telephony callsign of the position
+        :param frequency: Radio frequency of the position in MHz
+        :param identifier: Identifier of the position, e.g. NWW
+        :param middle_letter: Middle letter discriminating this position, e.g. N
+        :param prefix: Prefix of the position, e.g. EPWW
+        :param suffix: Suffix of the position, e.g. CTR
+        :param ssr_start: Start of squawk range
+        :param ssr_end: End of squawk range
+        :param vis_points: Array of visibility points (optional)
+        """
         if vis_points is None:
             vis_points = []
         self.name = name
@@ -22,6 +36,7 @@ class Position:
 
     @staticmethod
     def from_string(string: str):
+        """Create ATC position from ESE file formatted string"""
         string = string.split(':')
         name = string[0]
         callsign = string[1]
@@ -58,10 +73,25 @@ class Position:
 
 
 class Radar:
+    """Class representing a radar station"""
     def __init__(self, name: str, position: LatLong,
                  p_range: int, p_alt: int, p_cone: int,
                  s_range: int, s_alt: int, s_cone: int,
                  c_range: int, c_alt: int, c_cone: int):
+        """
+        Create a radar station
+        :param name: Name of the radar station
+        :param position: Position of the radar station
+        :param p_range: PSR range in Nautical Miles
+        :param p_alt: Altitude of the PSR antenna in feet
+        :param p_cone: PSR cone of silence in feet per Nautical Mile
+        :param s_range: S-mode range in Nautical Miles
+        :param s_alt: Altitude of the S-mode antenna in feet
+        :param s_cone: S-mode cone of silence in feet per Nautical Mile
+        :param c_range: C-mode range in Nautical Miles
+        :param c_alt: Altitude of the C-mode antenna in feet
+        :param c_cone: C-mode cone of silence in feet per Nautical Mile
+        """
         self.name = name
         self.position = position
         self.p_range = p_range
@@ -79,6 +109,7 @@ class Radar:
 
     @staticmethod
     def from_string(string):
+        """Create radar station from ESE formatted string"""
         string = string.split(':')
         name = string[1]
         lat = Coordinates(string[2])
@@ -97,7 +128,14 @@ class Radar:
 
 
 class Label:
+    """Class representing a text label"""
     def __init__(self, group: str, text: str, position: LatLong):
+        """
+        Create a text label
+        :param group: Group to store the label at
+        :param text: Text of the label
+        :param position: Position of the label
+        """
         self.group = group
         self.text = text
         self.position = position
@@ -117,7 +155,13 @@ class Label:
 
 
 class DynPoint:
+    """Class representing a GNG dynamic point"""
     def __init__(self, name: str, position: LatLong):
+        """
+        Create a dynamic point
+        :param name: Name of the point, e.g. EPWW913
+        :param position: Geographic position of the point
+        """
         self.name = name
         self.position = position
 
@@ -133,6 +177,10 @@ class ESEFile:
     file: TextIO = None
 
     def __init__(self, file):
+        """
+        Open file for parsing
+        :param file: Path to ESE file
+        """
         self.file = open(file, encoding='utf-8')
         self._parse()
 
@@ -191,6 +239,7 @@ class ESEFile:
             line = self.file.readline()
 
     def write_positions(self):
+        """Write ATC positions to a CSV file"""
         with open("output/positions.csv", 'w', newline='', encoding='utf-8') as positions_file:
             positions_writer = csv.writer(positions_file)
             positions_writer.writerow(["Name", "Callsign", "Frequency", "Identifier", "Middle Letter", "Prefix",
@@ -201,6 +250,7 @@ class ESEFile:
                                            position.ssr_end])
 
     def write_visibility_points(self):
+        """Write ATC visibility centers to a CSV file"""
         with open('output/visibility_points.csv', 'w', newline='', encoding='utf-8') as visibility_points_file:
             writer = csv.writer(visibility_points_file)
             writer.writerow(["Name", "Y", "X"])
@@ -209,6 +259,7 @@ class ESEFile:
                     writer.writerow([position.name, visibility_point.lat, visibility_point.lng])
 
     def write_radars(self):
+        """Write radar stations to a CSV file"""
         with open('output/radars.csv', 'w', newline='', encoding='utf-8') as radar_file:
             writer = csv.writer(radar_file)
             writer.writerow(["Name", "Y", "X",
@@ -222,6 +273,7 @@ class ESEFile:
                                  radar.s_range, radar.s_alt, radar.s_cone,])
 
     def write_labels(self):
+        """Write text labels to a CSV file"""
         with open('output/labels.csv', 'w', newline='', encoding='utf-8') as label_file:
             writer = csv.writer(label_file)
             writer.writerow(['Y', 'X', 'Group', 'Text'])
@@ -229,6 +281,7 @@ class ESEFile:
                 writer.writerow([label.position.lat, label.position.lng, label.group, label.text])
 
     def write_dynpoints(self):
+        """Write Dynamic Points to a CSV file"""
         with open('output/dynpoints.csv', 'w', newline='', encoding='utf-8') as dynpoints_file:
             writer = csv.writer(dynpoints_file)
             writer.writerow(['Y', 'X', 'Name'])
