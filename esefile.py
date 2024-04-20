@@ -1,4 +1,5 @@
 import csv
+from typing import TextIO
 
 from utils import Coordinates, LatLong
 
@@ -129,7 +130,7 @@ class ESEFile:
     Radars: set[Radar] = set()
     Labels: set[Label] = set()
     DynPoints: set[DynPoint] = set()
-    file = None
+    file: TextIO = None
 
     def __init__(self, file):
         self.file = open(file, encoding='utf-8')
