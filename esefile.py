@@ -123,6 +123,7 @@ class DynPoint:
     def __str__(self):
         return f"{self.name}"
 
+
 class ESEFile:
     Positions: set[Position] = set()
     Radars: set[Radar] = set()
@@ -187,7 +188,6 @@ class ESEFile:
                 else:
                     self.Labels.add(label)
             line = self.file.readline()
-
 
     def write_positions(self):
         with open("output/positions.csv", 'w', newline='', encoding='utf-8') as positions_file:
