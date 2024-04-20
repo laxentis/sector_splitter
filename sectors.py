@@ -1,10 +1,7 @@
-from esefile import Position
-
-
 class Sector:
     def __init__(self, name: str, lower_limit: int, upper_limit: int, note: str, sector_type: str,
                  owners: str, alt_owner: str, active: str, guests: str, dep_apt: str, arr_apt: str,
-                 add_display: str, msaw: int, definition: str, in_use: str = 'yes'):
+                 add_display: str, minimum_safe_altitude_warning: int, definition: str, in_use: str = 'yes'):
         """
         Create a sector object
         :param name: Sector name
@@ -19,7 +16,7 @@ class Sector:
         :param dep_apt: Departure airports the sector activates
         :param arr_apt: Arrival airports the sector activates
         :param add_display: Additional display lines definitions
-        :param msaw: Minimum Safe Altitude Warning in feet
+        :param minimum_safe_altitude_warning: Minimum Safe Altitude Warning in feet
         :param definition: Sector definition, a sequence of DynPoints
         :param in_use: 'yes' or 'no', defaults to 'yes'
         """
@@ -35,6 +32,6 @@ class Sector:
         self.dep_apt = dep_apt
         self.arr_apt = arr_apt
         self.add_display = add_display
-        self.msaw = msaw
+        self.minimum_safe_altitude_warning = minimum_safe_altitude_warning
         self.definition = definition
         self.in_use = True if in_use == 'yes' else False
