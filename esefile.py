@@ -6,8 +6,9 @@ from utils import Coordinates, LatLong
 
 class Position:
     """Class representing an ATC position"""
-    def __init__(self, name: str, callsign: str, frequency: float, identifier: str, middle_letter: str,
-                 prefix: str, suffix: str, ssr_start: str, ssr_end: str, vis_points=None):
+
+    def __init__(self, name: str, callsign: str, frequency: float, identifier: str, middle_letter: str, prefix: str,
+                 suffix: str, ssr_start: str, ssr_end: str, vis_points=None):
         """
         Create an ATC position
         :param name: Name of the ATC position, e.g. EPWW_N_CTR
@@ -74,10 +75,9 @@ class Position:
 
 class Radar:
     """Class representing a radar station"""
-    def __init__(self, name: str, position: LatLong,
-                 p_range: int, p_alt: int, p_cone: int,
-                 s_range: int, s_alt: int, s_cone: int,
-                 c_range: int, c_alt: int, c_cone: int):
+
+    def __init__(self, name: str, position: LatLong, p_range: int, p_alt: int, p_cone: int, s_range: int, s_alt: int,
+                 s_cone: int, c_range: int, c_alt: int, c_cone: int):
         """
         Create a radar station
         :param name: Name of the radar station
@@ -129,6 +129,7 @@ class Radar:
 
 class Label:
     """Class representing a text label"""
+
     def __init__(self, group: str, text: str, position: LatLong):
         """
         Create a text label
@@ -156,6 +157,7 @@ class Label:
 
 class DynPoint:
     """Class representing a GNG dynamic point"""
+
     def __init__(self, name: str, position: LatLong):
         """
         Create a dynamic point
@@ -167,6 +169,45 @@ class DynPoint:
 
     def __str__(self):
         return f"{self.name}"
+
+
+class COPX:
+    """Class representing a Coordination Point"""
+
+    def __init__(self, copx_type: str, fix_before: str, departure_runway: str, fix: str, fix_after: str,
+                 arrival_runway: str, from_sector: str, to_sector: str, climb_level: str, descend_level: str,
+                 cop_name: str):
+        self.type = copx_type
+        self.fixBefore = fix_before
+        self.depRwy = departure_runway
+        self.fix = fix
+        self.fixAfter = fix_after
+        self.arrRwy = arrival_runway
+        self.fromSector = from_sector
+        self.toSector = to_sector
+        self.climbLevel = climb_level
+        self.descendLevel = descend_level
+        self.copName = cop_name
+
+    @staticmethod
+    def from_string(string: str):
+        string = string.split(':')
+        copx_type = string[0]
+        fix_before = string[1]
+        dep_rwy = string[2]
+        fix = string[3]
+        fix_after = string[4]
+        arr_rwy = string[5]
+        from_sector = string[6]
+        to_sector = string[7]
+        climb_level = string[8]
+        descend_level = string[9]
+        cop_name = string[10]
+        return COPX(copx_type, fix_before, dep_rwy, fix, fix_after, arr_rwy, from_sector, to_sector, climb_level,
+                    descend_level, cop_name)
+
+    def __str__(self):
+        return f"{self.type}:{self.fixBefore}:{self.depRwy}:{self.fix}:{self.fixAfter}:{self.arrRwy}:{self.fromSector}:{self.toSector}:{self.climbLevel}:{self.descendLevel}:{self.copName}"
 
 
 class ESEFile:
@@ -242,12 +283,13 @@ class ESEFile:
         """Write ATC positions to a CSV file"""
         with open("output/positions.csv", 'w', newline='', encoding='utf-8') as positions_file:
             positions_writer = csv.writer(positions_file)
-            positions_writer.writerow(["Name", "Callsign", "Frequency", "Identifier", "Middle Letter", "Prefix",
-                                       "Suffix", "SSR Start", "SSR End"])
+            positions_writer.writerow(
+                ["Name", "Callsign", "Frequency", "Identifier", "Middle Letter", "Prefix", "Suffix", "SSR Start",
+                 "SSR End"])
             for position in self.Positions:
-                positions_writer.writerow([position.name, position.callsign, position.frequency, position.identifier,
-                                           position.middle_letter, position.prefix, position.suffix, position.ssr_start,
-                                           position.ssr_end])
+                positions_writer.writerow(
+                    [position.name, position.callsign, position.frequency, position.identifier, position.middle_letter,
+                     position.prefix, position.suffix, position.ssr_start, position.ssr_end])
 
     def write_visibility_points(self):
         """Write ATC visibility centers to a CSV file"""
@@ -262,15 +304,13 @@ class ESEFile:
         """Write radar stations to a CSV file"""
         with open('output/radars.csv', 'w', newline='', encoding='utf-8') as radar_file:
             writer = csv.writer(radar_file)
-            writer.writerow(["Name", "Y", "X",
-                             "P range", "P altitude", "P cone slope",
-                             "S range", "S altitude", "S cone slope",
-                             "C range", "C altitude", "C cone slope"])
+            writer.writerow(
+                ["Name", "Y", "X", "P range", "P altitude", "P cone slope", "S range", "S altitude", "S cone slope",
+                 "C range", "C altitude", "C cone slope"])
             for radar in self.Radars:
-                writer.writerow([radar.name, radar.position.lat, radar.position.lng,
-                                 radar.p_range, radar.p_alt, radar.p_cone,
-                                 radar.c_range, radar.c_alt, radar.c_cone,
-                                 radar.s_range, radar.s_alt, radar.s_cone,])
+                writer.writerow(
+                    [radar.name, radar.position.lat, radar.position.lng, radar.p_range, radar.p_alt, radar.p_cone,
+                     radar.c_range, radar.c_alt, radar.c_cone, radar.s_range, radar.s_alt, radar.s_cone, ])
 
     def write_labels(self):
         """Write text labels to a CSV file"""

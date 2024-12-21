@@ -35,3 +35,14 @@ class Sector:
         self.minimum_safe_altitude_warning = minimum_safe_altitude_warning
         self.definition = definition
         self.in_use = True if in_use == 'yes' else False
+
+
+class SectorParser:
+    Sectors: set[Sector] = set()
+
+    def __init__(self, file: str):
+        """
+        Parse Sectors XLS file into a set of Sector objects
+        :param file: Path to Sectors XLS file
+        """
+        pass
